@@ -16,7 +16,65 @@ tee -a /etc/sudoers >/dev/null <<EOF
 ${USERNAME} ALL=(ALL:ALL) ALL
 EOF
 
-pacman -Syu --needed efibootmgr grub networkmanager pipewire-pulse pipewire-jack vulkan-radeon cpupower libappimage dosfstools gstreamer gst-plugins-base gst-plugins-good gst-plugins-bad gst-plugins-ugly xdg-desktop-portal-hyprland xdg-desktop-portal-gtk wayland flatpak gammastep ranger mpv btop nmap slurp grim rclone rsync git git-lfs trash-cli 7zip eza chafa ollama wl-clipboard openssh ufw fastfetch docker docker-compose hyprpicker hyprland waybar alacritty rofi neovim gcc mingw-w64-gcc clang zig zls rust shfmt npm nodejs lua-language-server stylua adw-gtk-theme breeze5 noto-fonts noto-fonts-cjk noto-fonts-emoji ttf-jetbrains-mono ttf-jetbrains-mono-nerd papirus-icon-theme
+pacman -Syu --needed efibootmgr grub networkmanager pipewire-pulse pipewire-jack vulkan-radeon cpupower libappimage dosfstools gstreamer gst-plugins-base gst-plugins-good gst-plugins-bad gst-plugins-ugly xdg-desktop-portal-hyprland xdg-desktop-portal-gtk wayland flatpak gammastep ranger mpv btop nmap slurp grim rclone rsync git git-lfs trash-cli 7zip eza chafa wl-clipboard openssh ufw fastfetch docker docker-compose hyprpicker hyprland waybar alacritty rofi neovim gcc mingw-w64-gcc clang zig zls rust shfmt npm nodejs lua-language-server stylua adw-gtk-theme breeze5 noto-fonts noto-fonts-cjk noto-fonts-emoji ttf-jetbrains-mono ttf-jetbrains-mono-nerd papirus-icon-theme
+
+sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --daemon --yes
+
+nix-env -iA nixpkgs.efibootmgr \
+  nixpkgs.grub2 \
+  nixpkgs.networkmanager \
+  nixpkgs.pipewire \
+  nixpkgs.linuxPackages.cpupower \
+  nixpkgs.flatpak \
+  nixpkgs.xdg-desktop-portal \
+  nixpkgs.xdg-desktop-portal-hyprland \
+  nixpkgs.hyprland \
+  nixpkgs.waybar \
+  nixpkgs.rofi \
+  nixpkgs.alacritty \
+  nixpkgs.git \
+  nixpkgs.git-lfs \
+  nixpkgs.docker \
+  nixpkgs.docker-compose \
+  nixpkgs.openssh \
+  nixpkgs.gammastep \
+  nixpkgs.neovim \
+  nixpkgs.ranger \
+  nixpkgs.btop \
+  nixpkgs.fastfetch \
+  nixpkgs.eza \
+  nixpkgs.chafa \
+  nixpkgs.mpv \
+  nixpkgs.nmap \
+  nixpkgs.slurp \
+  nixpkgs.grim \
+  nixpkgs.hyprpicker \
+  nixpkgs.rclone \
+  nixpkgs.rsync \
+  nixpkgs.trash-cli \
+  nixpkgs._7zz \
+  nixpkgs.wl-clipboard \
+  nixpkgs.bash-language-server \
+  nixpkgs.shfmt \
+  nixpkgs.zig \
+  nixpkgs.zls \
+  nixpkgs.libgcc \
+  nixpkgs.llvmPackages_20.clang \
+  nixpkgs.lua-language-server \
+  nixpkgs.stylua \
+  nixpkgs.nodejs_20 \
+  nixpkgs.vscode-langservers-extracted \
+  nixpkgs.typescript-language-server \
+  nixpkgs.tailwindcss-language-server \
+  nixpkgs.prettier \
+  nixpkgs.rojo \
+  nixpkgs.adw-gtk3 \
+  nixpkgs.kdePackages.breeze \
+  nixpkgs.noto-fonts \
+  nixpkgs.jetbrains-mono \
+  nixpkgs.nerd-fonts.noto \
+  nixpkgs.nerd-fonts.jetbrains-mono \
+  nixpkgs.papirus-icon-theme
 
 grub-install --target=x86_64-efi
 tee -a /etc/default/grub >/dev/null <<EOF
