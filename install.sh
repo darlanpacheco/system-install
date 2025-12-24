@@ -44,8 +44,8 @@ mkdir -p /mnt/softwares
 echo ${DEVICE} >/mnt/softwares/device
 echo ${DEVICE_DRIVE} >/mnt/softwares/device_drive
 echo ${USERNAME} >/mnt/softwares/username
-echo /home/${USERNAME} >/mnt/softwares/userhome
-echo ${USERHOME}/.lock >/mnt/softwares/lockfile
+echo /home/${USERNAME} >/mnt/softwares/home
+echo ${HOME}/.lock >/mnt/softwares/lockfile
 echo ${PASSWORD} >/mnt/softwares/password
 echo ${PASSWORD_ROOT} >/mnt/softwares/password_root
 

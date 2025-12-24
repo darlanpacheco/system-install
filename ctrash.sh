@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-TRASH=${USERHOME}/.local/share/Trash/files
+TRASH=${HOME}/.local/share/Trash/files
 
-if [ -z "$1" ]; then
+if [ -z "${1}" ]; then
   exit 1
 fi
 
