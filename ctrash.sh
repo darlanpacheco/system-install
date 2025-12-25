@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
 
-TRASH=${HOME}/.local/share/Trash/files
+CMD="${1}"
+TRASH="${HOME}/.local/share/Trash/files"
 
-if [ -z "${1}" ]; then
+if [ -z "${CMD}" ]; then
   exit 1
 fi
 
-if [ ${1} = "status" ]; then
-  eza --icons ${TRASH}
-elif [ ${1} = "empty" ]; then
+if [ "${CMD}" = "status" ]; then
+  eza --icons "${TRASH}"
+elif [ "${CMD}" = "empty" ]; then
   trash-empty -f
 fi

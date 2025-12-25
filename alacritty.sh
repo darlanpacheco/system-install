@@ -1,28 +1,30 @@
 #!/usr/bin/env bash
 
 DEVICE=$(cat /softwares/device)
-DEVICE_DRIVE=$(cat /softwares/device_drive)
 USERNAME=$(cat /softwares/username)
 HOME=$(cat /softwares/home)
-LOCKFILE=$(cat /softwares/lockfile)
-PASSWORD=$(cat /softwares/password)
-PASSWORD_ROOT=$(cat /softwares/password_softwares)
+EMAIL=$(cat /softwares/email)
 
 sudo systemctl enable --now NetworkManager
 
+sudo pacman -S --needed mesa \
+  vulkan-radeon \
+  pipewire \
+  pipewire-jack \
+  flatpak \
+  wine \
+  xdg-desktop-portal \
+  xdg-desktop-portal-hyprland \
+  hyprland \
+  hyprpicker \
+  waybar \
+  rofi \
+  alacritty \
+  gcc \
+  clang \
+  mingw-w64-gcc
 sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --daemon --yes
-./nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-nix profile add --extra-experimental-features "nix-command flakes" --impure github:nix-community/nixGL
-
-nix-env -iA nixpkgs.pipewire \
-  nixpkgs.linuxPackages.cpupower \
-  nixpkgs.flatpak \
-  nixpkgs.xdg-desktop-portal \
-  nixpkgs.xdg-desktop-portal-hyprland \
-  nixpkgs.hyprland \
-  nixpkgs.waybar \
-  nixpkgs.rofi \
-  nixpkgs.alacritty \
+/nix/var/nix/profiles/default/bin/nix-env -iA nixpkgs.linuxPackages.cpupower \
   nixpkgs.git \
   nixpkgs.git-lfs \
   nixpkgs.docker \
@@ -39,7 +41,6 @@ nix-env -iA nixpkgs.pipewire \
   nixpkgs.nmap \
   nixpkgs.slurp \
   nixpkgs.grim \
-  nixpkgs.hyprpicker \
   nixpkgs.rclone \
   nixpkgs.rsync \
   nixpkgs.trash-cli \
@@ -49,8 +50,6 @@ nix-env -iA nixpkgs.pipewire \
   nixpkgs.shfmt \
   nixpkgs.zig \
   nixpkgs.zls \
-  nixpkgs.libgcc \
-  nixpkgs.llvmPackages_20.clang \
   nixpkgs.lua-language-server \
   nixpkgs.stylua \
   nixpkgs.nodejs_20 \
@@ -71,7 +70,7 @@ nix-env -iA nixpkgs.pipewire \
 
 # sudo -u ${USERNAME} ${HOME}/user.sh ${HOME}
 
-tee ${HOME}/.bashrc >/dev/null <<EOF
+tee "${HOME}/.bashrc" >/dev/null <<EOF
 alias c="clear"
 alias e="exit"
 
@@ -106,32 +105,30 @@ export QT_QPA_PLATFORMTHEME=gtk3
 export PATH=\${PATH}:\${HOME}/.local/npm/bin
 export PATH=\${PATH}:\${HOME}/.cargo/bin
 export DEVICE=${DEVICE}
-export DEVICE_DRIVE=${DEVICE_DRIVE}
 export USERNAME=${USERNAME}
 export HOME=${HOME}
-export LOCKFILE=${LOCKFILE}
 EOF
 
 HOME=$(cat /softwares/home)
 
-mkdir -p ${HOME}/Desktop ${HOME}/Documents ${HOME}/Downloads ${HOME}/Music ${HOME}/Videos ${HOME}/Projects
-mkdir -p ${HOME}/.local/npm
-mkdir -p ${HOME}/.themes ${HOME}/.fonts ${HOME}/.icons
+mkdir -p "${HOME}/Desktop" "${HOME}/Documents" "${HOME}/Downloads" "${HOME}/Music" "${HOME}/Videos" "${HOME}/Projects"
+mkdir -p "${HOME}/.local/npm"
+mkdir -p "${HOME}/.themes" "${HOME}/.fonts" "${HOME}/.icons"
 
-git clone https://github.com/darlanpacheco/system-files.git ${HOME}/system-files
+git clone https://github.com/darlanpacheco/system-files.git "${HOME}/system-files"
 
-cp -r ${HOME}/system-files/.[!.]* ${HOME}
-cp -r ${HOME}/system-files/* ${HOME}
-rm -rf ${HOME}/system-files
-rm -rf ${HOME}/.git
+cp -r "${HOME}/system-files/.[!.]*" "${HOME}"
+cp -r "${HOME}/system-files/*" "${HOME}"
+rm -rf "${HOME}/system-files"
+rm -rf "${HOME}/.git"
 
-cp -r /usr/share/themes/* ${HOME}/.themes
-cp -r /usr/share/fonts/* ${HOME}/.fonts
-cp -r /usr/share/icons/* ${HOME}/.icons
+cp -r /usr/share/themes/* "${HOME}/.themes"
+cp -r /usr/share/fonts/* "${HOME}/.fonts"
+cp -r /usr/share/icons/* "${HOME}/.icons"
 
-flatpak override --user --filesystem=${HOME}/.themes
-flatpak override --user --filesystem=${HOME}/.fonts
-flatpak override --user --filesystem=${HOME}/.icons
+flatpak override --user --filesystem="${HOME}/.themes"
+flatpak override --user --filesystem="${HOME}/.fonts"
+flatpak override --user --filesystem="${HOME}/.icons"
 flatpak override --user --env=GTK_THEME=adw-gtk3-dark
 flatpak override --user --env=GTK_FONT_NAME="JetBrains Mono 12"
 flatpak override --user --env=ICON_THEME=Papirus
@@ -150,12 +147,12 @@ flatpak override --user --filesystem=/home org.vinegarhq.Vinegar
 # sudo ufw default allow outgoing
 # sudo ufw enable
 
-# ssh-keygen -t ed25519 -C "darlanpacheco@proton.me"
+# ssh-keygen -t ed25519 -C "${EMAIL}"
 
 git lfs install
 
-touch ${LOCKFILE}
+touch "${LOCKFILE}"
 
-rm -rf /softwares
+sudo rm -rf /softwares
 
-exec ${SHELL}
+exec "${SHELL}"
