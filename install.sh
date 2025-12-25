@@ -35,7 +35,7 @@ mount ${ROOT_PARTITION} /mnt
 mkdir -p /mnt/boot/efi
 mount ${BOOT_PARTITION} /mnt/boot/efi
 
-pacstrap -K /mnt base base-devel linux linux-lts linux-firmware
+pacstrap -K /mnt base base-devel linux linux-lts linux-firmware efibootmgr grub networkmanager
 
 genfstab -U /mnt >>/mnt/etc/fstab
 

@@ -1,11 +1,20 @@
 #!/usr/bin/env bash
 
-sh <(curl --proto "=https" --tlsv1.2 -L https://nixos.org/nix/install) --no-daemon --yes
+DEVICE=$(cat /softwares/device)
+DEVICE_DRIVE=$(cat /softwares/device_drive)
+USERNAME=$(cat /softwares/username)
+HOME=$(cat /softwares/home)
+LOCKFILE=$(cat /softwares/lockfile)
+PASSWORD=$(cat /softwares/password)
+PASSWORD_ROOT=$(cat /softwares/password_softwares)
 
-nix-env -iA nixpkgs.efibootmgr \
-  nixpkgs.grub2 \
-  nixpkgs.networkmanager \
-  nixpkgs.pipewire \
+sudo systemctl enable --now NetworkManager
+
+sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --daemon --yes
+./nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+nix profile add --extra-experimental-features "nix-command flakes" --impure github:nix-community/nixGL
+
+nix-env -iA nixpkgs.pipewire \
   nixpkgs.linuxPackages.cpupower \
   nixpkgs.flatpak \
   nixpkgs.xdg-desktop-portal \
@@ -58,12 +67,7 @@ nix-env -iA nixpkgs.efibootmgr \
   nixpkgs.nerd-fonts.jetbrains-mono \
   nixpkgs.papirus-icon-theme
 
-grub-install --target=x86_64-efi
-tee -a /etc/default/grub >/dev/null <<EOF
-GRUB_GFXMODE=$(cat /sys/class/graphics/fb0/virtual_size | tr "," "x")
-EOF
-
-grub-mkconfig -o /boot/grub/grub.cfg
+# sudo systemctl enable --now sshd
 
 # sudo -u ${USERNAME} ${HOME}/user.sh ${HOME}
 
@@ -134,28 +138,24 @@ flatpak override --user --env=ICON_THEME=Papirus
 
 # sudo cpupower frequency-set --max 3.8GHz not to boot once
 
-sudo systemctl enable --now NetworkManager ufw sshd
-
 flatpak install flathub -y com.github.tchx84.Flatseal org.mozilla.firefox org.chromium.Chromium org.pulseaudio.pavucontrol de.haeckerfelix.Fragments org.libreoffice.LibreOffice org.inkscape.Inkscape org.gimp.GIMP com.github.libresprite.LibreSprite org.blender.Blender io.lmms.LMMS org.audacityteam.Audacity com.obsproject.Studio org.upscayl.Upscayl org.vinegarhq.Vinegar org.vinegarhq.Sober org.libretro.RetroArch net.rpcs3.RPCS3 net.shadps4.shadPS4 io.github.ryubing.Ryujinx net.lutris.Lutris com.valvesoftware.Steam org.gnome.Boxes
 
 flatpak override --user --filesystem=/tmp org.blender.Blender
 flatpak override --user --filesystem=/home org.vinegarhq.Vinegar
 
-sudo ufw allow http
-sudo ufw allow https
-sudo ufw limit ssh
-sudo ufw default deny incoming
-sudo ufw default allow outgoing
-sudo ufw enable
+# sudo ufw allow http
+# sudo ufw allow https
+# sudo ufw limit ssh
+# sudo ufw default deny incoming
+# sudo ufw default allow outgoing
+# sudo ufw enable
 
-ssh-keygen -t ed25519 -C "darlanpacheco@proton.me"
+# ssh-keygen -t ed25519 -C "darlanpacheco@proton.me"
 
 git lfs install
 
-ollama pull ministral-3:8b
-
 touch ${LOCKFILE}
 
-exec ${SHELL}
-
 rm -rf /softwares
+
+exec ${SHELL}

@@ -16,9 +16,14 @@ tee -a /etc/sudoers >/dev/null <<EOF
 ${USERNAME} ALL=(ALL:ALL) ALL
 EOF
 
+grub-install --target=x86_64-efi
+tee -a /etc/default/grub >/dev/null <<EOF
+GRUB_GFXMODE=$(cat /sys/class/graphics/fb0/virtual_size | tr "," "x")
+EOF
+
+grub-mkconfig -o /boot/grub/grub.cfg
+
 cp -r /softwares/user.sh ${HOME}
 cp -r /softwares/boot.sh ${HOME}
 cp -r /softwares/alacritty.sh ${HOME}
 cp -r /softwares/chroot.sh ${HOME}
-
-# pacman -Syu --needed efibootmgr grub networkmanager pipewire-pulse pipewire-jack vulkan-radeon cpupower libappimage dosfstools gstreamer gst-plugins-base gst-plugins-good gst-plugins-bad gst-plugins-ugly xdg-desktop-portal-hyprland xdg-desktop-portal-gtk wayland flatpak gammastep ranger mpv btop nmap slurp grim rclone rsync git git-lfs trash-cli 7zip eza chafa wl-clipboard openssh ufw fastfetch docker docker-compose hyprpicker hyprland waybar alacritty rofi neovim gcc mingw-w64-gcc clang zig zls rust shfmt npm nodejs lua-language-server stylua adw-gtk-theme breeze5 noto-fonts noto-fonts-cjk noto-fonts-emoji ttf-jetbrains-mono ttf-jetbrains-mono-nerd papirus-icon-theme
