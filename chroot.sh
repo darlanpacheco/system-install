@@ -3,7 +3,7 @@
 USERNAME=$(cat /softwares/username)
 HOME=$(cat /softwares/home)
 PASSWORD=$(cat /softwares/password)
-PASSWORD_ROOT=$(cat /softwares/password_softwares)
+PASSWORD_ROOT=$(cat /softwares/password_root)
 
 useradd -m -G wheel -s /bin/bash "${USERNAME}"
 echo "${USERNAME}:${PASSWORD}" | chpasswd
@@ -20,5 +20,5 @@ EOF
 
 grub-mkconfig -o /boot/grub/grub.cfg
 
-cp -r /softwares/alacritty.sh "${HOME}"
-cp -r /softwares/chroot.sh "${HOME}"
+cp -r /softwares/dotfiles.sh "${HOME}"
+cp -r /softwares/boot.sh "${HOME}"

@@ -39,17 +39,16 @@ genfstab -U /mnt >>/mnt/etc/fstab
 
 mkdir -p /mnt/softwares
 
-echo "${DEVICE}" >/mnt/softwares/device
 echo "${USERNAME}" >/mnt/softwares/username
 echo "/home/${USERNAME}" >/mnt/softwares/home
 echo "${EMAIL}" >/mnt/softwares/email
-echo "${HOME}/.lock" >/mnt/softwares/lockfile
 echo "${PASSWORD}" >/mnt/softwares/password
 echo "${PASSWORD_ROOT}" >/mnt/softwares/password_root
 
-cp -r ./rdrive.sh /mnt/usr/bin/rdrive
-cp -r ./boot.sh /mnt/softwares
-cp -r ./alacritty.sh /mnt/softwares
+cp -r ./ddrive.sh /mnt/usr/bin/ddrive
+cp -r ./dtrash.sh /mnt/usr/bin/dtrash
 cp -r ./chroot.sh /mnt/softwares
+cp -r ./boot.sh /mnt/softwares
+cp -r ./dotfiles.sh /mnt/softwares
 
 arch-chroot /mnt /softwares/chroot.sh
