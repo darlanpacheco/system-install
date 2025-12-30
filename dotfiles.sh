@@ -1,4 +1,8 @@
-tee "${HOME}"/.bashrc >/dev/null <<EOF
+name=$(cat /softwares/name)
+userhome=$(cat /softwares/userhome)
+email=$(cat /softwares/email)
+
+tee "${userhome}"/.bashrc >/dev/null <<EOF
 alias c="clear"
 alias e="exit"
 
@@ -29,12 +33,13 @@ export GDK_BACKEND=wayland
 export GTK_THEME=adw-gtk3-dark
 export QT_QPA_PLATFORM=wayland
 export QT_QPA_PLATFORMTHEME=gtk3
-export USERNAME=${USERNAME}
-export HOME=${HOME}
+export USERNAME=${username}
+export USERHOME=${userhome}
+export HOME=${userhome}
 EOF
 
-mkdir -p "${HOME}"/.config
-tee "${HOME}"/.config/mimeapps.list >/dev/null <<EOF
+mkdir -p "${userhome}"/.config
+tee "${userhome}"/.config/mimeapps.list >/dev/null <<EOF
 [Default Applications]
 x-scheme-handler/http=org.mozilla.firefox.desktop
 x-scheme-handler/https=org.mozilla.firefox.desktop
@@ -54,16 +59,16 @@ audio/mp4=org.mozilla.firefox.desktop
 application/pdf=org.mozilla.firefox.desktop
 EOF
 
-mkdir -p "${HOME}"/.config/gtk-3.0
-tee "${HOME}"/.config/gtk-3.0/settings.ini >/dev/null <<EOF
+mkdir -p "${userhome}"/.config/gtk-3.0
+tee "${userhome}"/.config/gtk-3.0/settings.ini >/dev/null <<EOF
 [Settings]
 gtk-application-prefer-dark-theme=true
 gtk-font-name=JetBrains Mono 12
 gtk-icon-theme-name=Papirus
 gtk-theme-name=adw-gtk3-dark
 EOF
-mkdir -p "${HOME}"/.config/gtk-4.0
-tee "${HOME}"/.config/gtk-4.0/settings.ini >/dev/null <<EOF
+mkdir -p "${userhome}"/.config/gtk-4.0
+tee "${userhome}"/.config/gtk-4.0/settings.ini >/dev/null <<EOF
 [Settings]
 gtk-application-prefer-dark-theme=true
 gtk-font-name=JetBrains Mono, 12
@@ -71,8 +76,8 @@ gtk-icon-theme-name=Papirus
 gtk-theme-name=adw-gtk3-dark
 EOF
 
-mkdir -p "${HOME}"/.config/hypr
-tee "${HOME}"/.config/hypr/hyprland.conf >/dev/null <<EOF
+mkdir -p "${userhome}"/.config/hypr
+tee "${userhome}"/.config/hypr/hyprland.conf >/dev/null <<EOF
 {
     workspace = 1, default:true
 }
@@ -166,8 +171,8 @@ ecosystem {
 }
 EOF
 
-mkdir -p "${HOME}"/.config/waybar
-tee "${HOME}"/.config/waybar/config.jsonc >/dev/null <<EOF
+mkdir -p "${userhome}"/.config/waybar
+tee "${userhome}"/.config/waybar/config.jsonc >/dev/null <<EOF
 {
   "position": "top",
   "modules-left": ["hyprland/workspaces"],
@@ -224,7 +229,7 @@ tee "${HOME}"/.config/waybar/config.jsonc >/dev/null <<EOF
   },
 }
 EOF
-tee "${HOME}"/.config/waybar/style.css >/dev/null <<EOF
+tee "${userhome}"/.config/waybar/style.css >/dev/null <<EOF
 * {
   font-family: "JetBrains Mono";
   font-weight: Bold;
@@ -277,8 +282,8 @@ menuitem {
 }
 EOF
 
-mkdir -p "${HOME}"/.config/rofi
-tee "${HOME}"/.config/rofi/config.rasi >/dev/null <<EOF
+mkdir -p "${userhome}"/.config/rofi
+tee "${userhome}"/.config/rofi/config.rasi >/dev/null <<EOF
 configuration {
   font: "JetBrains Mono Bold 13";
 }
@@ -332,8 +337,8 @@ textbox {
 }
 EOF
 
-mkdir -p "${HOME}"/.config/alacritty
-tee "${HOME}"/.config/alacritty/alacritty.toml >/dev/null <<EOF
+mkdir -p "${userhome}"/.config/alacritty
+tee "${userhome}"/.config/alacritty/alacritty.toml >/dev/null <<EOF
 [colors.primary]
 background = "#0f0f0f"
 
@@ -353,14 +358,14 @@ family = "JetBrains Mono"
 style = "Italic"
 EOF
 
-tee "${HOME}"/.gitconfig >/dev/null <<EOF
+tee "${userhome}"/.gitconfig >/dev/null <<EOF
 [user]
-  name = ${NAME}
-  email = ${EMAIL}
+  name = ${name}
+  email = ${email}
 EOF
 
-mkdir -p "${HOME}"/.config/ranger
-tee "${HOME}"/.config/ranger/scope.sh >/dev/null <<EOF
+mkdir -p "${userhome}"/.config/ranger
+tee "${userhome}"/.config/ranger/scope.sh >/dev/null <<EOF
 #!/usr/bin/env bash
 
 set -o noclobber -o noglob -o nounset -o pipefail
@@ -383,19 +388,19 @@ handle_mime "${MIMETYPE}"
 file --dereference --brief -- "${FILE_PATH}" && exit 5
 exit 1
 EOF
-chmod +x "${HOME}"/.config/ranger/scope.sh
-tee "${HOME}"/.config/ranger/rc.conf >/dev/null <<EOF
+chmod +x "${userhome}"/.config/ranger/scope.sh
+tee "${userhome}"/.config/ranger/rc.conf >/dev/null <<EOF
 set show_hidden true
 set draw_borders both
 EOF
 
-mkdir -p "${HOME}"/.config/btop
-tee "${HOME}"/.config/btop/btop.conf >/dev/null <<EOF
+mkdir -p "${userhome}"/.config/btop
+tee "${userhome}"/.config/btop/btop.conf >/dev/null <<EOF
 theme_background = False
 EOF
 
-mkdir -p "${HOME}"/.config/nvim/lua/plugins
-tee "${HOME}"/.config/nvim/init.lua >/dev/null <<EOF
+mkdir -p "${userhome}"/.config/nvim/lua/plugins
+tee "${userhome}"/.config/nvim/init.lua >/dev/null <<EOF
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
@@ -418,7 +423,7 @@ require("plugins.conform")
 require("plugins.gitsigns")
 require("plugins.nvim-ts")
 EOF
-tee "${HOME}"/.config/nvim/lua/configs.lua >/dev/null <<EOF
+tee "${userhome}"/.config/nvim/lua/configs.lua >/dev/null <<EOF
 vim.opt.termguicolors = true
 
 vim.opt.tabstop = 2
@@ -485,7 +490,6 @@ _G.formatters = {
 	bash = { "shfmt" },
 	c = { "clang-format" },
 	cpp = { "clang-format" },
-	lua = { "stylua" },
 	javascript = { "prettier" },
 	typescript = { "prettier" },
 	javascriptreact = { "prettier" },
@@ -499,7 +503,7 @@ _G.border_style = "single"
 vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
 vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
 EOF
-tee "${HOME}"/.config/nvim/lua/plugins.lua >/dev/null <<EOF
+tee "${userhome}"/.config/nvim/lua/plugins.lua >/dev/null <<EOF
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
 	local lazyrepo = "https://github.com/folke/lazy.nvim.git"
@@ -539,7 +543,7 @@ require("lazy").setup({
 	},
 })
 EOF
-tee "${HOME}"/.config/nvim/lua/keymaps.lua >/dev/null <<EOF
+tee "${userhome}"/.config/nvim/lua/keymaps.lua >/dev/null <<EOF
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
@@ -562,7 +566,7 @@ vim.keymap.set("n", "<leader>f", ":Telescope find_files hidden=true<CR>", { nore
 vim.keymap.set("n", "<leader>tg", ":Telescope git_status<CR>", { noremap = true, silent = true })
 vim.keymap.set("n", "<leader>tf", ":ToggleTerm direction=float<CR>", { noremap = true, silent = true })
 EOF
-tee "${HOME}"/.config/nvim/lua/plugins/borders.lua >/dev/null <<EOF
+tee "${userhome}"/.config/nvim/lua/plugins/borders.lua >/dev/null <<EOF
 local ignore_filetypes = {
 	TelescopePrompt = true,
 	TelescopeResults = true,
@@ -580,7 +584,7 @@ vim.api.nvim_create_autocmd("FileType", {
 	callback = set_border,
 })
 EOF
-tee "${HOME}"/.config/nvim/lua/plugins/conform.lua >/dev/null <<EOF
+tee "${userhome}"/.config/nvim/lua/plugins/conform.lua >/dev/null <<EOF
 require("conform").setup({
 	formatters_by_ft = _G.formatters,
 	format_on_save = {
@@ -590,7 +594,7 @@ require("conform").setup({
 	},
 })
 EOF
-tee "${HOME}"/.config/nvim/lua/plugins/cmp.lua >/dev/null <<EOF
+tee "${userhome}"/.config/nvim/lua/plugins/cmp.lua >/dev/null <<EOF
 local cmp = require("cmp")
 cmp.setup({
 	mapping = cmp.mapping.preset.insert({
@@ -607,7 +611,7 @@ cmp.setup({
 	},
 })
 EOF
-tee "${HOME}"/.config/nvim/lua/plugins/telescope.lua >/dev/null <<EOF
+tee "${userhome}"/.config/nvim/lua/plugins/telescope.lua >/dev/null <<EOF
 require("telescope").setup({
 	defaults = {
 		border = true,
@@ -619,14 +623,14 @@ require("telescope").setup({
 	},
 })
 EOF
-tee "${HOME}"/.config/nvim/lua/plugins/gitsigns.lua >/dev/null <<EOF
+tee "${userhome}"/.config/nvim/lua/plugins/gitsigns.lua >/dev/null <<EOF
 require("gitsigns").setup({
 	preview_config = {
 		border = _G.border_style,
 	},
 })
 EOF
-tee "${HOME}"/.config/nvim/lua/plugins/lsp.lua >/dev/null <<EOF
+tee "${userhome}"/.config/nvim/lua/plugins/lsp.lua >/dev/null <<EOF
 vim.lsp.config("*", {
 	root_markers = { ".git" },
 })
@@ -639,7 +643,7 @@ for name, config in pairs(_G.lsps) do
 	vim.lsp.enable(name)
 end
 EOF
-tee "${HOME}"/.config/nvim/lua/plugins/nvim-ts.lua >/dev/null <<EOF
+tee "${userhome}"/.config/nvim/lua/plugins/nvim-ts.lua >/dev/null <<EOF
 require("nvim-treesitter.configs").setup({
 	auto_install = true,
 	highlight = {
@@ -648,8 +652,10 @@ require("nvim-treesitter.configs").setup({
 })
 EOF
 
-mkdir -p "${HOME}"/.var/app/org.libretro.RetroArch/config/retroarch
-tee "${HOME}"/.var/app/org.libretro.RetroArch/config/retroarch/retroarch.cfg >/dev/null <<EOF
+mkdir -p "${userhome}"/.var/app/org.libretro.RetroArch/config/retroarch
+mkdir -p "${userhome}"/.var/app/org.libretro.RetroArch/config/retroarch/config/LRPS2
+mkdir -p "${userhome}"/.var/app/org.libretro.RetroArch/config/retroarch/config/remaps/"FinalBurn Neo"
+tee "${userhome}"/.var/app/org.libretro.RetroArch/config/retroarch/retroarch.cfg >/dev/null <<EOF
 video_driver = "vulkan"
 video_fullscreen = "true"
 video_font_enable = "false"
@@ -662,10 +668,38 @@ ozone_menu_color_theme = "10"
 menu_framebuffer_opacity = "1.000000"
 config_save_on_exit = "false"
 EOF
-mkdir -p "${HOME}"/.var/app/net.rpcs3.RPCS3/config/rpcs3
-mkdir -p "${HOME}"/.var/app/net.rpcs3.RPCS3/config/rpcs3/input_configs/global
-mkdir -p "${HOME}"/.var/app/net.rpcs3.RPCS3/config/rpcs3/GuiConfigs
-tee "${HOME}"/.var/app/net.rpcs3.RPCS3/config/rpcs3/config.yml >/dev/null <<EOF
+tee "${userhome}"/.var/app/org.libretro.RetroArch/config/retroarch/config/LRPS2/LRPS2.opt >/dev/null <<EOF
+pcsx2_fastboot = "disabled"
+pcsx2_axis_deadzone1 = "25%"
+pcsx2_axis_deadzone2 = "25%"
+pcsx2_axis_scale1 = "100%"
+pcsx2_axis_scale2 = "100%"
+pcsx2_button_deadzone1 = "25%"
+pcsx2_button_deadzone2 = "25%"
+pcsx2_texture_filtering = "Nearest"
+pcsx2_trilinear_filtering = "disabled"
+pcsx2_anisotropic_filtering = "disabled"
+EOF
+tee "${userhome}"/.var/app/org.libretro.RetroArch/config/retroarch/config/remaps/"FinalBurn Neo"/"FinalBurn Neo.rmp" >/dev/null <<EOF
+input_libretro_device_p1 = "1"
+input_libretro_device_p2 = "1"
+input_libretro_device_p3 = "1"
+input_libretro_device_p4 = "1"
+input_libretro_device_p5 = "1"
+input_libretro_device_p6 = "1"
+input_libretro_device_p7 = "1"
+input_libretro_device_p8 = "1"
+input_player1_btn_l = "12"
+input_player1_btn_l2 = "13"
+input_player1_btn_r = "10"
+input_player1_btn_r2 = "11"
+input_player1_btn_r3 = "2"
+input_player1_btn_select = "-1"
+EOF
+mkdir -p "${userhome}"/.var/app/net.rpcs3.RPCS3/config/rpcs3
+mkdir -p "${userhome}"/.var/app/net.rpcs3.RPCS3/config/rpcs3/input_configs/global
+mkdir -p "${userhome}"/.var/app/net.rpcs3.RPCS3/config/rpcs3/GuiConfigs
+tee "${userhome}"/.var/app/net.rpcs3.RPCS3/config/rpcs3/config.yml >/dev/null <<EOF
 Video:
   Renderer: Vulkan
   Aspect ratio: 16:9
@@ -688,12 +722,12 @@ Miscellaneous:
   Start games in fullscreen mode: true
   Silence All Logs: true
 EOF
-tee "${HOME}"/.var/app/net.rpcs3.RPCS3/config/rpcs3/input_configs/global/Default.yml >/dev/null <<EOF
+tee "${userhome}"/.var/app/net.rpcs3.RPCS3/config/rpcs3/input_configs/global/Default.yml >/dev/null <<EOF
 Player 1 Input:
   Handler: SDL
   Device: Twin USB PS2 Adapter 1
 EOF
-tee "${HOME}"/.var/app/net.rpcs3.RPCS3/config/rpcs3/GuiConfigs/CurrentSettings.ini >/dev/null <<EOF
+tee "${userhome}"/.var/app/net.rpcs3.RPCS3/config/rpcs3/GuiConfigs/CurrentSettings.ini >/dev/null <<EOF
 [Meta]
 checkUpdateStart=false
 currentStylesheet=native (Breeze)
@@ -708,14 +742,14 @@ infoBoxEnabledInstallPKG=false
 infoBoxEnabledInstallPUP=false
 infoBoxEnabledWelcome=false
 EOF
-mkdir -p "${HOME}"/.var/app/net.shadps4.shadPS4/data/shadPS4
-tee "${HOME}"/.var/app/net.shadps4.shadPS4/data/shadPS4/config.toml >/dev/null <<EOF
+mkdir -p "${userhome}"/.var/app/net.shadps4.shadPS4/data/shadPS4
+tee "${userhome}"/.var/app/net.shadps4.shadPS4/data/shadPS4/config.toml >/dev/null <<EOF
 [GPU]
 Fullscreen = true
 FullscreenMode = "Fullscreen"
 EOF
-mkdir -p "${HOME}"/.var/app/io.github.ryubing.Ryujinx/config/Ryujinx
-tee "${HOME}"/.var/app/io.github.ryubing.Ryujinx/config/Ryujinx/Config.json >/dev/null <<EOF
+mkdir -p "${userhome}"/.var/app/io.github.ryubing.Ryujinx/config/Ryujinx
+tee "${userhome}"/.var/app/io.github.ryubing.Ryujinx/config/Ryujinx/Config.json >/dev/null <<EOF
 {
   "version": 70,
   "enable_file_log": false,
