@@ -1,46 +1,35 @@
 #!/usr/bin/env bash
 
-CMD="${1}"
-REMOTE="${2}"
-STORAGE="${3}"
-RESTRICTED="${STORAGE}/restricted/"
+cmd="${1}"
+remote="${2}"
+storage="${3}"
+restricted="${storage}/restricted/"
+username="$(whoami)"
 
-if [ -z "${CMD}" ]; then
+if [ -z "${cmd}" ]; then
   exit 1
 fi
 
-if [ "${CMD}" = "status" ]; then
-  sudo rclone check "${REMOTE}": "${STORAGE}" \
+if [ "${cmd}" = "status" ]; then
+  sudo rclone check "${remote}": "${storage}" \
     --filter "- Personal Vault/**" \
-    --filter "- roms/sony/**" \
-    --filter "- roms/sony2/**" \
-    --filter "- roms/sony3/**" \
-    --filter "- roms/sony4/**" \
-    --filter "- roms/nintendo5/**" \
+    --filter "- library/**" \
     --progress
-  sudo rclone about "${REMOTE}":
-elif [ "${CMD}" = "pull" ]; then
-  sudo rclone sync "${REMOTE}": "${STORAGE}" \
+  sudo rclone about "${remote}":
+elif [ "${cmd}" = "pull" ]; then
+  sudo rclone sync "${remote}": "${storage}" \
     --filter "- Personal Vault/**" \
-    --filter "- roms/sony/**" \
-    --filter "- roms/sony2/**" \
-    --filter "- roms/sony3/**" \
-    --filter "- roms/sony4/**" \
-    --filter "- roms/nintendo5/**" \
+    --filter "- library/**" \
     --progress
-elif [ "${CMD}" = "push" ]; then
-  sudo rclone sync "${STORAGE}" "${REMOTE}": \
+elif [ "${cmd}" = "push" ]; then
+  sudo rclone sync "${storage}" "${remote}": \
     --filter "- Personal Vault/**" \
-    --filter "- roms/sony/**" \
-    --filter "- roms/sony2/**" \
-    --filter "- roms/sony3/**" \
-    --filter "- roms/sony4/**" \
-    --filter "- roms/nintendo5/**" \
+    --filter "- library/**" \
     --progress
-elif [ "${CMD}" = "lock" ]; then
-  sudo chown -R root:root "${RESTRICTED}"
-  sudo chmod -R 700 "${RESTRICTED}"
-elif [ "${CMD}" = "unlock" ]; then
-  sudo chown -R "${USERNAME}":"${USERNAME}" "${RESTRICTED}"
-  sudo chmod -R 755 "${RESTRICTED}"
+elif [ "${cmd}" = "lock" ]; then
+  sudo chown -R root:root "${restricted}"
+  sudo chmod -R 700 "${restricted}"
+elif [ "${cmd}" = "unlock" ]; then
+  sudo chown -R "${username}":"${username}" "${restricted}"
+  sudo chmod -R 755 "${restricted}"
 fi
