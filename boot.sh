@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-USERNAME=$(cat /softwares/username)
-HOME=$(cat /softwares/home)
-EMAIL=$(cat /softwares/email)
+username="$(whoami)"
+userhome="/home/${username}"
+email=$(cat /softwares/email)
 
 sudo systemctl enable --now NetworkManager
 
@@ -11,8 +11,6 @@ sudo pacman -S --needed mesa \
   pipewire \
   pipewire-jack \
   flatpak \
-  wine \
-  wine-mono \
   xdg-desktop-portal \
   xdg-desktop-portal-hyprland \
   hyprland \
@@ -20,15 +18,25 @@ sudo pacman -S --needed mesa \
   waybar \
   rofi \
   alacritty \
+  wine \
+  wine-mono \
+  umu-launcher \
   gcc \
   clang \
-  mingw-w64-gcc
+  mingw-w64-gcc \
+  ufw \
+  openssh \
+  proton-vpn-cli
 sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --daemon --yes
 . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-nix-env -iA nixpkgs.waydroid \
-  nixpkgs.linuxPackages.cpupower \
+nix-env -iA nixpkgs.linuxPackages.cpupower \
+  nixpkgs.lm_sensors \
+  nixpkgs.waydroid \
+  nixpkgs.pulsemixer \
+  nixpkgs.aria2 \
+  nixpkgs.btrfs-progs \
+  nixpkgs.dosfstools \
   nixpkgs.git \
-  nixpkgs.git-lfs \
   nixpkgs.docker \
   nixpkgs.docker-compose \
   nixpkgs.openssh \
@@ -54,7 +62,6 @@ nix-env -iA nixpkgs.waydroid \
   nixpkgs.zig \
   nixpkgs.zls \
   nixpkgs.lua-language-server \
-  nixpkgs.stylua \
   nixpkgs.nodejs_20 \
   nixpkgs.vscode-langservers-extracted \
   nixpkgs.typescript-language-server \
@@ -69,8 +76,6 @@ nix-env -iA nixpkgs.waydroid \
 flatpak install flathub -y com.github.tchx84.Flatseal \
   org.mozilla.firefox \
   org.chromium.Chromium \
-  org.pulseaudio.pavucontrol \
-  de.haeckerfelix.Fragments \
   org.libreoffice.LibreOffice \
   org.inkscape.Inkscape \
   org.gimp.GIMP \
@@ -89,40 +94,33 @@ flatpak install flathub -y com.github.tchx84.Flatseal \
   com.valvesoftware.Steam \
   org.gnome.Boxes
 
-# sudo systemctl enable --now sshd
+sudo systemctl enable --now ufw sshd
 
-# sudo -u ${USERNAME} ${HOME}/user.sh ${HOME}
+mkdir -p "${userhome}/Desktop" "${userhome}/Documents" "${userhome}/Downloads" "${userhome}/Music" "${userhome}/Videos" "${userhome}/Projects"
+mkdir -p "${userhome}/.local/npm"
+mkdir -p "${userhome}/.themes" "${userhome}/.fonts" "${userhome}/.icons"
 
-mkdir -p "${HOME}/Desktop" "${HOME}/Documents" "${HOME}/Downloads" "${HOME}/Music" "${HOME}/Videos" "${HOME}/Projects"
-mkdir -p "${HOME}/.local/npm"
-mkdir -p "${HOME}/.themes" "${HOME}/.fonts" "${HOME}/.icons"
+cp -r /usr/share/themes/* "${userhome}/.themes"
+cp -r /usr/share/fonts/* "${userhome}/.fonts"
+cp -r /usr/share/icons/* "${userhome}/.icons"
 
-./dotfiles.sh
-
-cp -r /usr/share/themes/* "${HOME}/.themes"
-cp -r /usr/share/fonts/* "${HOME}/.fonts"
-cp -r /usr/share/icons/* "${HOME}/.icons"
-
-flatpak override --user --filesystem="${HOME}/.themes"
-flatpak override --user --filesystem="${HOME}/.fonts"
-flatpak override --user --filesystem="${HOME}/.icons"
+flatpak override --user --filesystem="${userhome}/.themes"
+flatpak override --user --filesystem="${userhome}/.fonts"
+flatpak override --user --filesystem="${userhome}/.icons"
 flatpak override --user --filesystem=/tmp org.blender.Blender
 flatpak override --user --filesystem=/home org.vinegarhq.Vinegar
 flatpak override --user --env=GTK_THEME=adw-gtk3-dark
 flatpak override --user --env=GTK_FONT_NAME="JetBrains Mono 12"
 flatpak override --user --env=ICON_THEME=Papirus
 
-# sudo cpupower frequency-set --max 3.8GHz not to boot once
+sudo ufw allow http
+sudo ufw allow https
+sudo ufw limit ssh
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+sudo ufw enable
 
-# sudo ufw allow http
-# sudo ufw allow https
-# sudo ufw limit ssh
-# sudo ufw default deny incoming
-# sudo ufw default allow outgoing
-# sudo ufw enable
-
-# ssh-keygen -t ed25519 -C "${EMAIL}"
-
-git lfs install
+ssh-keygen -t ed25519 -C "${email}"
 
 sudo rm -rf /softwares
+./dotfiles.sh

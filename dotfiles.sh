@@ -1,8 +1,13 @@
-tee "${HOME}"/.bashrc >/dev/null <<EOF
+name=$(cat /softwares/name)
+userhome="/home/$(whoami)"
+email=$(cat /softwares/email)
+
+tee "${userhome}"/.bashrc >/dev/null <<EOF
 alias c="clear"
 alias e="exit"
 
 alias rm="trash"
+alias dl="rm"
 alias ls="eza --icons"
 
 alias install="nix-env -iA"
@@ -29,12 +34,10 @@ export GDK_BACKEND=wayland
 export GTK_THEME=adw-gtk3-dark
 export QT_QPA_PLATFORM=wayland
 export QT_QPA_PLATFORMTHEME=gtk3
-export USERNAME=${USERNAME}
-export HOME=${HOME}
 EOF
 
-mkdir -p "${HOME}"/.config
-tee "${HOME}"/.config/mimeapps.list >/dev/null <<EOF
+mkdir -p "${userhome}"/.config
+tee "${userhome}"/.config/mimeapps.list >/dev/null <<EOF
 [Default Applications]
 x-scheme-handler/http=org.mozilla.firefox.desktop
 x-scheme-handler/https=org.mozilla.firefox.desktop
@@ -54,16 +57,16 @@ audio/mp4=org.mozilla.firefox.desktop
 application/pdf=org.mozilla.firefox.desktop
 EOF
 
-mkdir -p "${HOME}"/.config/gtk-3.0
-tee "${HOME}"/.config/gtk-3.0/settings.ini >/dev/null <<EOF
+mkdir -p "${userhome}"/.config/gtk-3.0
+tee "${userhome}"/.config/gtk-3.0/settings.ini >/dev/null <<EOF
 [Settings]
 gtk-application-prefer-dark-theme=true
 gtk-font-name=JetBrains Mono 12
 gtk-icon-theme-name=Papirus
 gtk-theme-name=adw-gtk3-dark
 EOF
-mkdir -p "${HOME}"/.config/gtk-4.0
-tee "${HOME}"/.config/gtk-4.0/settings.ini >/dev/null <<EOF
+mkdir -p "${userhome}"/.config/gtk-4.0
+tee "${userhome}"/.config/gtk-4.0/settings.ini >/dev/null <<EOF
 [Settings]
 gtk-application-prefer-dark-theme=true
 gtk-font-name=JetBrains Mono, 12
@@ -71,8 +74,8 @@ gtk-icon-theme-name=Papirus
 gtk-theme-name=adw-gtk3-dark
 EOF
 
-mkdir -p "${HOME}"/.config/hypr
-tee "${HOME}"/.config/hypr/hyprland.conf >/dev/null <<EOF
+mkdir -p "${userhome}"/.config/hypr
+tee "${userhome}"/.config/hypr/hyprland.conf >/dev/null <<EOF
 {
     workspace = 1, default:true
 }
@@ -135,8 +138,6 @@ general {
     gaps_in = 4
     gaps_out = 8
     border_size = 0
-
-    layout = master
 }
 decoration {
     active_opacity = 1
@@ -155,10 +156,11 @@ animations {
     enabled = false
 }
 misc {
+    force_default_wallpaper = 2
     enable_anr_dialog = false
     disable_splash_rendering = true
-    disable_hyprland_logo = true
-    background_color = 0x0f0f0f
+    # disable_hyprland_logo = true
+    # background_color = 0x0f0f0f
 }
 ecosystem {
     no_update_news = true
@@ -166,8 +168,8 @@ ecosystem {
 }
 EOF
 
-mkdir -p "${HOME}"/.config/waybar
-tee "${HOME}"/.config/waybar/config.jsonc >/dev/null <<EOF
+mkdir -p "${userhome}"/.config/waybar
+tee "${userhome}"/.config/waybar/config.jsonc >/dev/null <<EOF
 {
   "position": "top",
   "modules-left": ["hyprland/workspaces"],
@@ -175,6 +177,7 @@ tee "${HOME}"/.config/waybar/config.jsonc >/dev/null <<EOF
   "modules-right": [
     "pulseaudio",
     "custom/cpu_temp",
+    "custom/gpu_temp",
     "memory",
     "disk",
     "network",
@@ -182,49 +185,47 @@ tee "${HOME}"/.config/waybar/config.jsonc >/dev/null <<EOF
   ],
 
   "hyprland/workspaces": {
-    "format": "[{name}]",
-    "tooltip": false,
+    "format": "{name}",
   },
   "custom/clock": {
     "exec": "date '+%H:%M %a %m-%d'",
     "interval": 32,
     "format": "{}",
-    "tooltip": false,
   },
   "pulseaudio": {
-    "format": "VOL[{volume}]",
-    "tooltip": false,
+    "format": "VOL {volume}",
   },
 
   "network": {
     "interval": 1,
-    "format-ethernet": "NETWORK[{bandwidthDownBytes} {bandwidthUpBytes}]",
-    "format-wifi": "NETWORK[{bandwidthDownBytes} {bandwidthUpBytes}]",
-    "tooltip": false,
+    "format-ethernet": "NETWORK {bandwidthDownBytes} {bandwidthUpBytes}",
+    "format-wifi": "NETWORK {bandwidthDownBytes} {bandwidthUpBytes}",
   },
   "custom/cpu_temp": {
-    "exec": "cat /sys/class/hwmon/hwmon3/temp1_input | cut -c 1-2",
+    "exec": "sensors | grep -i tctl | grep -oP '\\\\d+(?=\\\\.)'",
     "interval": 2,
-    "format": "CPU[{}]",
-    "tooltip": false,
+    "format": "CPU {}",
+  },
+  "custom/gpu_temp": {
+    "exec": "sensors | grep -i edge | grep -oP '\\\\d+(?=\\\\.)'",
+    "interval": 2,
+    "format": "GPU {}",
   },
   "memory": {
     "interval": 2,
-    "format": "RAM[{used:0.1f} {swapUsed:0.1f}]",
-    "tooltip": false,
+    "format": "RAM {used:0.1f}",
   },
   "disk": {
     "interval": 8,
-    "format": "DISK[{specific_used:0.1f}]",
+    "format": "DISK {specific_used:0.1f}",
     "unit": "GiB",
-    "tooltip": false,
   },
   "tray": {
     "icon-size": 32,
   },
 }
 EOF
-tee "${HOME}"/.config/waybar/style.css >/dev/null <<EOF
+tee "${userhome}"/.config/waybar/style.css >/dev/null <<EOF
 * {
   font-family: "JetBrains Mono";
   font-weight: Bold;
@@ -249,7 +250,7 @@ menuitem:hover {
 }
 
 button {
-  padding: 0px;
+  padding: 4px;
 }
 button label {
   color: #242424;
@@ -264,9 +265,13 @@ menu {
 menuitem {
   padding: 5px 9px;
 }
+tooltip {
+  opacity: 0;
+}
 
 #pulseaudio,
 #custom-cpu_temp,
+#custom-gpu_temp,
 #memory,
 #disk,
 #network {
@@ -277,8 +282,8 @@ menuitem {
 }
 EOF
 
-mkdir -p "${HOME}"/.config/rofi
-tee "${HOME}"/.config/rofi/config.rasi >/dev/null <<EOF
+mkdir -p "${userhome}"/.config/rofi
+tee "${userhome}"/.config/rofi/config.rasi >/dev/null <<EOF
 configuration {
   font: "JetBrains Mono Bold 13";
 }
@@ -332,8 +337,8 @@ textbox {
 }
 EOF
 
-mkdir -p "${HOME}"/.config/alacritty
-tee "${HOME}"/.config/alacritty/alacritty.toml >/dev/null <<EOF
+mkdir -p "${userhome}"/.config/alacritty
+tee "${userhome}"/.config/alacritty/alacritty.toml >/dev/null <<EOF
 [colors.primary]
 background = "#0f0f0f"
 
@@ -353,14 +358,14 @@ family = "JetBrains Mono"
 style = "Italic"
 EOF
 
-tee "${HOME}"/.gitconfig >/dev/null <<EOF
+tee "${userhome}"/.gitconfig >/dev/null <<EOF
 [user]
-  name = ${NAME}
-  email = ${EMAIL}
+  name = ${name}
+  email = ${email}
 EOF
 
-mkdir -p "${HOME}"/.config/ranger
-tee "${HOME}"/.config/ranger/scope.sh >/dev/null <<EOF
+mkdir -p "${userhome}"/.config/ranger
+tee "${userhome}"/.config/ranger/scope.sh >/dev/null <<EOF
 #!/usr/bin/env bash
 
 set -o noclobber -o noglob -o nounset -o pipefail
@@ -383,19 +388,19 @@ handle_mime "${MIMETYPE}"
 file --dereference --brief -- "${FILE_PATH}" && exit 5
 exit 1
 EOF
-chmod +x "${HOME}"/.config/ranger/scope.sh
-tee "${HOME}"/.config/ranger/rc.conf >/dev/null <<EOF
+chmod +x "${userhome}"/.config/ranger/scope.sh
+tee "${userhome}"/.config/ranger/rc.conf >/dev/null <<EOF
 set show_hidden true
 set draw_borders both
 EOF
 
-mkdir -p "${HOME}"/.config/btop
-tee "${HOME}"/.config/btop/btop.conf >/dev/null <<EOF
+mkdir -p "${userhome}"/.config/btop
+tee "${userhome}"/.config/btop/btop.conf >/dev/null <<EOF
 theme_background = False
 EOF
 
-mkdir -p "${HOME}"/.config/nvim/lua/plugins
-tee "${HOME}"/.config/nvim/init.lua >/dev/null <<EOF
+mkdir -p "${userhome}"/.config/nvim/lua/plugins
+tee "${userhome}"/.config/nvim/init.lua >/dev/null <<EOF
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
@@ -418,7 +423,7 @@ require("plugins.conform")
 require("plugins.gitsigns")
 require("plugins.nvim-ts")
 EOF
-tee "${HOME}"/.config/nvim/lua/configs.lua >/dev/null <<EOF
+tee "${userhome}"/.config/nvim/lua/configs.lua >/dev/null <<EOF
 vim.opt.termguicolors = true
 
 vim.opt.tabstop = 2
@@ -485,7 +490,6 @@ _G.formatters = {
 	bash = { "shfmt" },
 	c = { "clang-format" },
 	cpp = { "clang-format" },
-	lua = { "stylua" },
 	javascript = { "prettier" },
 	typescript = { "prettier" },
 	javascriptreact = { "prettier" },
@@ -499,7 +503,7 @@ _G.border_style = "single"
 vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
 vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
 EOF
-tee "${HOME}"/.config/nvim/lua/plugins.lua >/dev/null <<EOF
+tee "${userhome}"/.config/nvim/lua/plugins.lua >/dev/null <<EOF
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
 	local lazyrepo = "https://github.com/folke/lazy.nvim.git"
@@ -539,7 +543,7 @@ require("lazy").setup({
 	},
 })
 EOF
-tee "${HOME}"/.config/nvim/lua/keymaps.lua >/dev/null <<EOF
+tee "${userhome}"/.config/nvim/lua/keymaps.lua >/dev/null <<EOF
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
@@ -562,7 +566,7 @@ vim.keymap.set("n", "<leader>f", ":Telescope find_files hidden=true<CR>", { nore
 vim.keymap.set("n", "<leader>tg", ":Telescope git_status<CR>", { noremap = true, silent = true })
 vim.keymap.set("n", "<leader>tf", ":ToggleTerm direction=float<CR>", { noremap = true, silent = true })
 EOF
-tee "${HOME}"/.config/nvim/lua/plugins/borders.lua >/dev/null <<EOF
+tee "${userhome}"/.config/nvim/lua/plugins/borders.lua >/dev/null <<EOF
 local ignore_filetypes = {
 	TelescopePrompt = true,
 	TelescopeResults = true,
@@ -580,7 +584,7 @@ vim.api.nvim_create_autocmd("FileType", {
 	callback = set_border,
 })
 EOF
-tee "${HOME}"/.config/nvim/lua/plugins/conform.lua >/dev/null <<EOF
+tee "${userhome}"/.config/nvim/lua/plugins/conform.lua >/dev/null <<EOF
 require("conform").setup({
 	formatters_by_ft = _G.formatters,
 	format_on_save = {
@@ -590,7 +594,7 @@ require("conform").setup({
 	},
 })
 EOF
-tee "${HOME}"/.config/nvim/lua/plugins/cmp.lua >/dev/null <<EOF
+tee "${userhome}"/.config/nvim/lua/plugins/cmp.lua >/dev/null <<EOF
 local cmp = require("cmp")
 cmp.setup({
 	mapping = cmp.mapping.preset.insert({
@@ -607,7 +611,7 @@ cmp.setup({
 	},
 })
 EOF
-tee "${HOME}"/.config/nvim/lua/plugins/telescope.lua >/dev/null <<EOF
+tee "${userhome}"/.config/nvim/lua/plugins/telescope.lua >/dev/null <<EOF
 require("telescope").setup({
 	defaults = {
 		border = true,
@@ -619,14 +623,14 @@ require("telescope").setup({
 	},
 })
 EOF
-tee "${HOME}"/.config/nvim/lua/plugins/gitsigns.lua >/dev/null <<EOF
+tee "${userhome}"/.config/nvim/lua/plugins/gitsigns.lua >/dev/null <<EOF
 require("gitsigns").setup({
 	preview_config = {
 		border = _G.border_style,
 	},
 })
 EOF
-tee "${HOME}"/.config/nvim/lua/plugins/lsp.lua >/dev/null <<EOF
+tee "${userhome}"/.config/nvim/lua/plugins/lsp.lua >/dev/null <<EOF
 vim.lsp.config("*", {
 	root_markers = { ".git" },
 })
@@ -639,7 +643,7 @@ for name, config in pairs(_G.lsps) do
 	vim.lsp.enable(name)
 end
 EOF
-tee "${HOME}"/.config/nvim/lua/plugins/nvim-ts.lua >/dev/null <<EOF
+tee "${userhome}"/.config/nvim/lua/plugins/nvim-ts.lua >/dev/null <<EOF
 require("nvim-treesitter.configs").setup({
 	auto_install = true,
 	highlight = {
@@ -648,274 +652,45 @@ require("nvim-treesitter.configs").setup({
 })
 EOF
 
-mkdir -p "${HOME}"/.var/app/org.libretro.RetroArch/config/retroarch
-tee "${HOME}"/.var/app/org.libretro.RetroArch/config/retroarch/retroarch.cfg >/dev/null <<EOF
+mkdir -p "${userhome}"/.var/app/org.libretro.RetroArch/config/retroarch
+mkdir -p "${userhome}"/.var/app/org.libretro.RetroArch/config/retroarch/config/LRPS2
+mkdir -p "${userhome}"/.var/app/org.libretro.RetroArch/config/retroarch/config/remaps/"FinalBurn Neo"
+tee "${userhome}"/.var/app/org.libretro.RetroArch/config/retroarch/retroarch.cfg >/dev/null <<EOF
 video_driver = "vulkan"
 video_fullscreen = "true"
 video_font_enable = "false"
 input_driver = "sdl2"
-savestate_auto_load = "true"
-savestate_auto_save = "true"
 assets_directory = "/app/share/libretro/assets/"
 joypad_autoconfig_dir = "/app/share/libretro/autoconfig"
 ozone_menu_color_theme = "10"
 menu_framebuffer_opacity = "1.000000"
 config_save_on_exit = "false"
 EOF
-mkdir -p "${HOME}"/.var/app/net.rpcs3.RPCS3/config/rpcs3
-mkdir -p "${HOME}"/.var/app/net.rpcs3.RPCS3/config/rpcs3/input_configs/global
-mkdir -p "${HOME}"/.var/app/net.rpcs3.RPCS3/config/rpcs3/GuiConfigs
-tee "${HOME}"/.var/app/net.rpcs3.RPCS3/config/rpcs3/config.yml >/dev/null <<EOF
-Video:
-  Renderer: Vulkan
-  Aspect ratio: 16:9
-  MSAA: Disabled
-  Shader Precision: Low
-  Output Scaling Mode: Nearest
-  Anisotropic Filter Override: 2
-  Resolution Scale: 150
-Miscellaneous:
-  Show trophy popups: false
-  Show RPCN popups: false
-  Show shader compilation hint: false
-  Show PPU compilation hint: false
-  Show autosave/autoload hint: true
-  Show pressure intensity toggle hint: false
-  Show analog limiter toggle hint: false
-  Show mouse and keyboard toggle hint: false
-  Show capture hints: false
-  Pause emulation on RPCS3 focus loss: true
-  Start games in fullscreen mode: true
-  Silence All Logs: true
+tee "${userhome}"/.var/app/org.libretro.RetroArch/config/retroarch/config/LRPS2/LRPS2.opt >/dev/null <<EOF
+pcsx2_fastboot = "disabled"
+pcsx2_axis_deadzone1 = "25%"
+pcsx2_axis_deadzone2 = "25%"
+pcsx2_axis_scale1 = "100%"
+pcsx2_axis_scale2 = "100%"
+pcsx2_button_deadzone1 = "25%"
+pcsx2_button_deadzone2 = "25%"
+pcsx2_texture_filtering = "Nearest"
+pcsx2_trilinear_filtering = "disabled"
+pcsx2_anisotropic_filtering = "disabled"
 EOF
-tee "${HOME}"/.var/app/net.rpcs3.RPCS3/config/rpcs3/input_configs/global/Default.yml >/dev/null <<EOF
-Player 1 Input:
-  Handler: SDL
-  Device: Twin USB PS2 Adapter 1
-EOF
-tee "${HOME}"/.var/app/net.rpcs3.RPCS3/config/rpcs3/GuiConfigs/CurrentSettings.ini >/dev/null <<EOF
-[Meta]
-checkUpdateStart=false
-currentStylesheet=native (Breeze)
-
-[main_window]
-confirmationBoxBootGame=false
-confirmationBoxExitGame=false
-confirmationObsoleteCfg=false
-confirmationRestart=false
-confirmationSameButtons=false
-infoBoxEnabledInstallPKG=false
-infoBoxEnabledInstallPUP=false
-infoBoxEnabledWelcome=false
-EOF
-mkdir -p "${HOME}"/.var/app/net.shadps4.shadPS4/data/shadPS4
-tee "${HOME}"/.var/app/net.shadps4.shadPS4/data/shadPS4/config.toml >/dev/null <<EOF
-[GPU]
-Fullscreen = true
-FullscreenMode = "Fullscreen"
-EOF
-mkdir -p "${HOME}"/.var/app/io.github.ryubing.Ryujinx/config/Ryujinx
-tee "${HOME}"/.var/app/io.github.ryubing.Ryujinx/config/Ryujinx/Config.json >/dev/null <<EOF
-{
-  "version": 70,
-  "enable_file_log": false,
-  "backend_threading": "On",
-  "res_scale": 1,
-  "res_scale_custom": 1,
-  "max_anisotropy": 2,
-  "aspect_ratio": "Fixed16x9",
-  "anti_aliasing": "None",
-  "scaling_filter": "Nearest",
-  "scaling_filter_level": 80,
-  "graphics_shaders_dump_path": "",
-  "logging_enable_debug": false,
-  "logging_enable_stub": false,
-  "logging_enable_info": false,
-  "logging_enable_warn": false,
-  "logging_enable_error": false,
-  "logging_enable_trace": false,
-  "logging_enable_guest": false,
-  "logging_enable_fs_access_log": false,
-  "logging_enable_avalonia": false,
-  "logging_filtered_classes": [],
-  "logging_graphics_debug_level": "None",
-  "system_language": "AmericanEnglish",
-  "system_region": "USA",
-  "system_time_zone": "UTC",
-  "system_time_offset": -203,
-  "match_system_time": false,
-  "use_input_global_config": false,
-  "docked_mode": true,
-  "enable_discord_integration": false,
-  "check_updates_on_start": false,
-  "update_checker_type": "PromptAtStartup",
-  "focus_lost_action_type": "PauseEmulation",
-  "show_confirm_exit": false,
-  "ignore_applet": false,
-  "skip_user_profiles": false,
-  "remember_window_state": false,
-  "show_title_bar": false,
-  "enable_hardware_acceleration": true,
-  "hide_cursor": 1,
-  "enable_vsync": false,
-  "vsync_mode": 0,
-  "enable_custom_vsync_interval": false,
-  "custom_vsync_interval": 120,
-  "enable_shader_cache": true,
-  "enable_texture_recompression": true,
-  "enable_macro_hle": true,
-  "enable_color_space_passthrough": false,
-  "enable_ptc": true,
-  "enable_low_power_ptc": true,
-  "tick_scalar": 50,
-  "enable_internet_access": false,
-  "enable_fs_integrity_checks": false,
-  "fs_global_access_log_mode": 0,
-  "audio_backend": "SDL2",
-  "audio_volume": 1,
-  "memory_manager_mode": "HostMappedUnsafe",
-  "dram_size": 0,
-  "ignore_missing_services": false,
-  "gui_columns": {
-  "fav_column": true,
-  "icon_column": true,
-  "app_column": true,
-  "dev_column": true,
-  "version_column": true,
-  "ldn_info_column": false,
-  "time_played_column": true,
-  "last_played_column": true,
-  "file_ext_column": true,
-  "file_size_column": true,
-  "path_column": true
-  },
-  "column_sort": {
-  "sort_column_id": 0,
-  "sort_ascending": false
-  },
-  "game_dirs": [],
-  "autoload_dirs": [],
-  "shown_file_types": {
-  "nsp": true,
-  "pfs0": true,
-  "xci": true,
-  "nca": true,
-  "nro": true,
-  "nso": true
-  },
-  "window_startup": {
-  "window_size_width": 1904,
-  "window_size_height": 1026,
-  "window_position_x": 8,
-  "window_position_y": 46,
-  "window_maximized": false
-  },
-  "language_code": "en_US",
-  "base_style": "Dark",
-  "game_list_view_mode": 0,
-  "show_names": true,
-  "grid_size": 2,
-  "application_sort": 0,
-  "is_ascending_order": true,
-  "start_fullscreen": true,
-  "start_no_ui": true,
-  "show_console": true,
-  "enable_keyboard": false,
-  "enable_mouse": false,
-  "disable_input_when_out_of_focus": false,
-  "hotkeys": {
-  "toggle_vsync_mode": "F1",
-  "screenshot": "F8",
-  "show_ui": "F4",
-  "pause": "F5",
-  "toggle_mute": "F2",
-  "res_scale_up": "Unbound",
-  "res_scale_down": "Unbound",
-  "volume_up": "Unbound",
-  "volume_down": "Unbound",
-  "custom_vsync_interval_increment": "Unbound",
-  "custom_vsync_interval_decrement": "Unbound",
-  "turbo_mode": "Unbound",
-  "turbo_mode_while_held": false
-  },
-  "input_config": [
-  {
-    "left_joycon_stick": {
-    "joystick": "Left",
-    "invert_stick_x": false,
-    "invert_stick_y": false,
-    "rotate90_cw": false,
-    "stick_button": "LeftStick"
-    },
-    "right_joycon_stick": {
-    "joystick": "Right",
-    "invert_stick_x": false,
-    "invert_stick_y": false,
-    "rotate90_cw": false,
-    "stick_button": "RightStick"
-    },
-    "deadzone_left": 0.1,
-    "deadzone_right": 0.1,
-    "range_left": 1,
-    "range_right": 1,
-    "trigger_threshold": 0.5,
-    "motion": {
-    "motion_backend": "GamepadDriver",
-    "sensitivity": 100,
-    "gyro_deadzone": 1,
-    "enable_motion": true
-    },
-    "rumble": {
-    "strong_rumble": 1,
-    "weak_rumble": 1,
-    "enable_rumble": false
-    },
-    "led": {
-    "enable_led": false,
-    "turn_off_led": false,
-    "use_rainbow": false,
-    "led_color": 0
-    },
-    "left_joycon": {
-    "button_minus": "Back",
-    "button_l": "LeftShoulder",
-    "button_zl": "LeftTrigger",
-    "button_sl": "Unbound",
-    "button_sr": "Unbound",
-    "dpad_up": "DpadUp",
-    "dpad_down": "DpadDown",
-    "dpad_left": "DpadLeft",
-    "dpad_right": "DpadRight"
-    },
-    "right_joycon": {
-    "button_plus": "Start",
-    "button_r": "RightShoulder",
-    "button_zr": "RightTrigger",
-    "button_sl": "Unbound",
-    "button_sr": "Unbound",
-    "button_x": "Y",
-    "button_b": "A",
-    "button_y": "X",
-    "button_a": "B"
-    },
-    "version": 1,
-    "backend": "GamepadSDL2",
-    "id": "0-00000003-0810-0000-0100-000010010000",
-    "name": "Twin USB PS2 Adapter (0)",
-    "controller_type": "ProController",
-    "player_index": "Player1"
-  }
-  ],
-  "rainbow_speed": 1,
-  "graphics_backend": "Vulkan",
-  "preferred_gpu": "0x1002_0x1636",
-  "multiplayer_mode": 0,
-  "multiplayer_lan_interface_id": "0",
-  "multiplayer_disable_p2p": false,
-  "multiplayer_ldn_passphrase": "",
-  "ldn_server": "",
-  "use_hypervisor": true,
-  "show_dirty_hacks": false,
-  "dirty_hacks": []
-}
+tee "${userhome}"/.var/app/org.libretro.RetroArch/config/retroarch/config/remaps/"FinalBurn Neo"/"FinalBurn Neo.rmp" >/dev/null <<EOF
+input_libretro_device_p1 = "1"
+input_libretro_device_p2 = "1"
+input_libretro_device_p3 = "1"
+input_libretro_device_p4 = "1"
+input_libretro_device_p5 = "1"
+input_libretro_device_p6 = "1"
+input_libretro_device_p7 = "1"
+input_libretro_device_p8 = "1"
+input_player1_btn_l = "12"
+input_player1_btn_l2 = "13"
+input_player1_btn_r = "10"
+input_player1_btn_r2 = "11"
+input_player1_btn_r3 = "2"
+input_player1_btn_select = "-1"
 EOF
