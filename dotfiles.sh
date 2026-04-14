@@ -82,11 +82,17 @@ mkdir -p "${config}"/hypr
 tee "${config}"/hypr/hyprland.conf >/dev/null <<EOF
 {
     workspace = 1, default:true
+    workspace = 1, gapsout:32 8 8 8
+    windowrule = match:initial_class ^(dbar|dmenu)$, float on
+    windowrule = match:initial_class ^dbar$, no_initial_focus on
+    windowrule = match:initial_class ^dbar$, size (monitor_w) 24
+    windowrule = match:initial_class ^dbar$, move 0 0
+    windowrule = match:initial_class ^dbar$, rounding 0
+    windowrule = match:initial_class ^dmenu$, size 512 256
 }
 {
     exec-once = gammastep -O 2560k
-    exec-once = waybar
-    exec-once = hyprctl setcursor Adwaita 32
+    exec-once = alacritty --class dbar -e dbar
     exec-once = gsettings set org.gnome.desktop.interface color-scheme "prefer-dark"
     exec-once = gsettings set org.gnome.desktop.interface gtk-theme "adw-gtk3-dark"
     exec-once = gsettings set org.gnome.desktop.interface font-name "JetBrains Mono 12"
@@ -99,7 +105,7 @@ tee "${config}"/hypr/hyprland.conf >/dev/null <<EOF
     bind = super, t, togglefloating
 
     bind = super, return, exec, alacritty
-    bind = super, r, exec, rofi -show drun
+    bind = super, r, exec, alacritty --class dmenu -e dmenu
     bind = super, p, exec, grim -g "\$(slurp)" - | wl-copy
 
     bind = super, f, fullscreen, active
@@ -172,120 +178,6 @@ ecosystem {
 }
 EOF
 
-mkdir -p "${config}"/waybar
-tee "${config}"/waybar/config.jsonc >/dev/null <<EOF
-{
-  "position": "top",
-  "modules-left": ["hyprland/workspaces"],
-  "modules-center": ["custom/clock"],
-  "modules-right": [
-    "pulseaudio",
-    "custom/cpu_temp",
-    "custom/gpu_temp",
-    "memory",
-    "disk",
-    "network",
-    "tray",
-  ],
-
-  "hyprland/workspaces": {
-    "format": "{name}",
-  },
-  "custom/clock": {
-    "exec": "date '+%H:%M %a %m-%d'",
-    "interval": 32,
-    "format": "{}",
-  },
-  "pulseaudio": {
-    "format": "VOL {volume}",
-  },
-
-  "network": {
-    "interval": 1,
-    "format-ethernet": "NETWORK {bandwidthDownBytes} {bandwidthUpBytes}",
-    "format-wifi": "NETWORK {bandwidthDownBytes} {bandwidthUpBytes}",
-  },
-  "custom/cpu_temp": {
-    "exec": "sensors | grep -i tctl | grep -oP '\\\\d+(?=\\\\.)'",
-    "interval": 2,
-    "format": "CPU {}",
-  },
-  "custom/gpu_temp": {
-    "exec": "sensors | grep -i edge | grep -oP '\\\\d+(?=\\\\.)'",
-    "interval": 2,
-    "format": "GPU {}",
-  },
-  "memory": {
-    "interval": 2,
-    "format": "RAM {used:0.1f}",
-  },
-  "disk": {
-    "interval": 8,
-    "format": "DISK {specific_used:0.1f}",
-    "unit": "GiB",
-  },
-  "tray": {
-    "icon-size": 32,
-  },
-}
-EOF
-tee "${config}"/waybar/style.css >/dev/null <<EOF
-* {
-  font-family: "JetBrains Mono";
-  font-weight: Bold;
-  font-size: 15px;
-  border: none;
-  outline: none;
-  box-shadow: none;
-  border-radius: 0px;
-  color: #ffffff;
-}
-
-#waybar,
-button,
-button > *,
-menu,
-menuitem,
-separator {
-  background: #0f0f0f;
-}
-menuitem:hover {
-  background: #242424;
-}
-
-button {
-  padding: 4px;
-}
-button label {
-  color: #242424;
-}
-button.active label {
-  color: #ffffff;
-}
-menu {
-  padding: 9px;
-  border-radius: 8px;
-}
-menuitem {
-  padding: 5px 9px;
-}
-tooltip {
-  opacity: 0;
-}
-
-#pulseaudio,
-#custom-cpu_temp,
-#custom-gpu_temp,
-#memory,
-#disk,
-#network {
-  padding: 8px;
-}
-#tray {
-  padding-right: 4px;
-}
-EOF
-
 mkdir -p "${config}"/rofi
 tee "${config}"/rofi/config.rasi >/dev/null <<EOF
 configuration {
@@ -347,7 +239,7 @@ tee "${config}"/alacritty/alacritty.toml >/dev/null <<EOF
 background = "#0f0f0f"
 
 [font]
-size = 12
+size = 14
 [font.normal]
 family = "JetBrains Mono"
 style = "Regular"
@@ -653,14 +545,6 @@ pcsx2_trilinear_filtering = "disabled"
 pcsx2_anisotropic_filtering = "disabled"
 EOF
 tee "${var}"/app/org.libretro.RetroArch/config/retroarch/config/remaps/"FinalBurn Neo"/"FinalBurn Neo.rmp" >/dev/null <<EOF
-input_libretro_device_p1 = "1"
-input_libretro_device_p2 = "1"
-input_libretro_device_p3 = "1"
-input_libretro_device_p4 = "1"
-input_libretro_device_p5 = "1"
-input_libretro_device_p6 = "1"
-input_libretro_device_p7 = "1"
-input_libretro_device_p8 = "1"
 input_player1_btn_l = "12"
 input_player1_btn_l2 = "13"
 input_player1_btn_r = "10"

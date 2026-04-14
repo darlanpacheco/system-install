@@ -46,8 +46,9 @@ echo "${email}" >/mnt/softwares/email
 echo "${password}" >/mnt/softwares/password
 echo "${password_root}" >/mnt/softwares/password_root
 
-cp -r ./ddrive.sh /mnt/usr/bin/ddrive
-cp -r ./dtrash.sh /mnt/usr/bin/dtrash
+for file in ./bin/*.sh; do
+  cp -r "${file}" "/mnt/usr/bin/$(basename "${file}" .sh)"
+done
 cp -r ./chroot.sh /mnt/softwares
 cp -r ./boot.sh /mnt/softwares
 cp -r ./dotfiles.sh /mnt/softwares

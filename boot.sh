@@ -15,13 +15,10 @@ sudo pacman -S --needed nvidia-open-lts \
   xdg-desktop-portal-hyprland \
   hyprland \
   hyprpicker \
-  waybar \
-  rofi \
   alacritty \
   wine \
   wine-mono \
   ufw \
-  openssh \
   proton-vpn-cli
 sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --daemon --yes
 . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
@@ -85,7 +82,7 @@ flatpak install flathub -y com.github.tchx84.Flatseal \
 
 sudo systemctl enable --now ufw sshd
 
-mkdir -p "${userhome}/Desktop" "${userhome}/Documents" "${userhome}/Downloads" "${userhome}/Music" "${userhome}/Videos" "${userhome}/Projects"
+mkdir -p "${userhome}/Desktop" "${userhome}/Documents" "${userhome}/Downloads" "${userhome}/Music" "${userhome}/Videos"
 
 # mkdir -p "${userhome}/.themes" "${userhome}/.fonts" "${userhome}/.icons"
 # ln -sfn "${userhome}/.nix-profile/share/icons" "${userhome}/.icons"
