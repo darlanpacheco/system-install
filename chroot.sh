@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 
 username=$(cat /softwares/username)
-userhome=$(cat /softwares/userhome)
+userhome="/home/${username}"
 password=$(cat /softwares/password)
 password_root=$(cat /softwares/password_root)
 
-useradd -m -G wheel -s /bin/bash "${username}"
+useradd -m -s /bin/bash -G wheel "${username}"
 echo "${username}:${password}" | chpasswd
 echo "root:${password_root}" | chpasswd
 
 tee -a /etc/sudoers >/dev/null <<EOF
-${username} ALL=(ALL:ALL) ALL
+%wheel ALL=(ALL:ALL) ALL
 EOF
 
 grub-install --target=x86_64-efi

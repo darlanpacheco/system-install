@@ -9,7 +9,7 @@ if [ -z "${cmd}" ]; then
 fi
 
 if [ "${cmd}" = "status" ]; then
-  eza --icons "${trash}"
+  ls --color "${trash}"
 elif [ "${cmd}" = "empty" ]; then
   trash-empty -f
 fi
