@@ -270,7 +270,7 @@ tee "${config}"/nvim/init.lua >/dev/null <<EOF
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
-function open_telescope()
+local function open_telescope()
 	vim.cmd("Telescope find_files hidden=true")
 end
 vim.api.nvim_create_autocmd("VimEnter", {
@@ -287,7 +287,6 @@ require("plugins.lsp")
 require("plugins.cmp")
 require("plugins.conform")
 require("plugins.gitsigns")
-require("plugins.nvim-ts")
 EOF
 tee "${config}"/nvim/lua/configs.lua >/dev/null <<EOF
 vim.opt.termguicolors = true
@@ -401,12 +400,6 @@ require("lazy").setup({
 		"akinsho/toggleterm.nvim",
 		opts = {},
 	},
-	{
-		"nvim-treesitter/nvim-treesitter",
-	},
-	{
-		"nvim-tree/nvim-web-devicons",
-	},
 })
 EOF
 tee "${config}"/nvim/lua/keymaps.lua >/dev/null <<EOF
@@ -508,14 +501,6 @@ for name, config in pairs(_G.lsps) do
 	})
 	vim.lsp.enable(name)
 end
-EOF
-tee "${config}"/nvim/lua/plugins/nvim-ts.lua >/dev/null <<EOF
-require("nvim-treesitter.configs").setup({
-	auto_install = true,
-	highlight = {
-		enable = true,
-	},
-})
 EOF
 
 mkdir -p "${var}"/app/org.libretro.RetroArch/config/retroarch
