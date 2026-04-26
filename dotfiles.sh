@@ -105,7 +105,7 @@ tee "${config}"/hypr/hyprland.conf >/dev/null <<EOF
     bind = super, t, togglefloating
 
     bind = super, return, exec, alacritty
-    bind = super, r, exec, alacritty --class dmenu -e dmenu
+    bind = super, r, exec, rofi -show drun
     bind = super, p, exec, grim -g "\$(slurp)" - | wl-copy
 
     bind = super, f, fullscreen, active
