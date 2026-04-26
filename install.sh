@@ -18,7 +18,7 @@ boot_partition="${device}${part_prefix}2"
 root_partition="${device}${part_prefix}3"
 
 wipefs --all --force "${device}"
-cat <<EOF | sfdisk "${device}"
+cat <<EOF | sfdisk --force "${device}"
 label: gpt
 size=16GiB, type=swap
 size=512MiB, type=uefi
