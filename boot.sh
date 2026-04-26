@@ -9,6 +9,7 @@ sudo pacman -S --needed nvidia-open-lts \
   nvidia-open \
   nvidia-utils \
   pipewire \
+  pipewire-pulse \
   pipewire-jack \
   flatpak \
   xdg-desktop-portal \
