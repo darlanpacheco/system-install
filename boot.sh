@@ -9,8 +9,9 @@ sudo pacman -S --needed nvidia-open-lts \
 	nvidia-utils \
 	pipewire \
 	pipewire-pulse \
-	pipewire-jack \
-	flatpak \
+	pipewire-jack
+
+sudo pacman -S --needed flatpak \
 	xdg-desktop-portal \
 	xdg-desktop-portal-hyprland \
 	hyprland \
@@ -18,16 +19,18 @@ sudo pacman -S --needed nvidia-open-lts \
 	alacritty \
 	wine \
 	wine-mono \
-	proton-vpn-cli \
-	inkscape \
+	proton-vpn-cli
+
+sudo pacman -S --needed inkscape \
 	gimp \
 	libresprite \
 	blender \
 	obs-studio \
 	lmms \
 	audacity \
-	libreoffice-fresh \
-	adw-gtk-theme \
+	libreoffice-fresh
+
+sudo pacman -S --needed adw-gtk-theme \
 	breeze5 \
 	noto-fonts \
 	noto-fonts-cjk \
@@ -39,24 +42,24 @@ nix-env -iA nixpkgs.lm_sensors \
 	nixpkgs.pulsemixer \
 	nixpkgs.btrfs-progs \
 	nixpkgs.dosfstools \
-	nixpkgs.git \
-	nixpkgs.docker \
-	nixpkgs.docker-compose \
 	nixpkgs.openssh \
 	nixpkgs.gammastep \
-	nixpkgs.neovim \
-	nixpkgs.fastfetch \
-	nixpkgs.chafa \
-	nixpkgs.mpv \
-	nixpkgs.nmap \
 	nixpkgs.slurp \
 	nixpkgs.grim \
 	nixpkgs.rclone \
 	nixpkgs.rsync \
 	nixpkgs.trash-cli \
-	nixpkgs.ffmpeg_7 \
-	nixpkgs._7zz \
 	nixpkgs.wl-clipboard \
+	nixpkgs._7zz \
+	nixpkgs.ffmpeg_7 \
+	nixpkgs.fastfetch \
+	nixpkgs.nmap
+
+nix-env -iA nixpkgs.chafa \
+	nixpkgs.mpv
+
+nix-env -iA nixpkgs.git \
+	nixpkgs.neovim \
 	nixpkgs.zig \
 	nixpkgs.zls \
 	nixpkgs.bash-language-server \
@@ -69,13 +72,14 @@ nix-env -iA nixpkgs.lm_sensors \
 	nixpkgs.typescript-language-server \
 	nixpkgs.tailwindcss-language-server \
 	nixpkgs.prettier
+
 flatpak install flathub -y org.mozilla.firefox \
 	org.chromium.Chromium \
-	org.libretro.RetroArch \
-	com.valvesoftware.Steam \
-	com.heroicgameslauncher.hgl \
-	org.vinegarhq.Sober \
 	org.gnome.Boxes
+
+flatpak install flathub -y org.libretro.RetroArch \
+	com.valvesoftware.Steam \
+	com.heroicgameslauncher.hgl
 
 sudo systemctl enable --now sshd
 
