@@ -5,19 +5,18 @@ email=$(cat /softwares/email)
 userhome="/home/$(whoami)"
 config="${userhome}"/.config
 var="${userhome}"/.var
+font="JetBrains Mono"
 
 tee "${userhome}"/.bashrc >/dev/null <<EOF
 alias c="clear"
 alias e="exit"
+alias q="exit"
 
 alias rm="trash"
 alias dl="rm"
 alias ls="ls --color"
 
-alias install="nix-env -iA"
-alias uninstall="nix-env -e"
 alias update="sudo pacman -Syu && flatpak update -y && nix-channel --update && nix-env -u '*'"
-alias list="nix-env -q"
 
 alias gts="git status"
 alias gta="git add"
@@ -27,9 +26,6 @@ alias gtl="git log"
 
 terminal() {
     alacritty --working-directory "\${PWD}" &
-}
-finder() {
-    echo 'grep -r --include="*.zig" "" .'
 }
 run() {
     nohup "\${@}" >/dev/null 2>&1 &
@@ -71,7 +67,7 @@ mkdir -p "${config}"/gtk-3.0
 tee "${config}"/gtk-3.0/settings.ini >/dev/null <<EOF
 [Settings]
 gtk-application-prefer-dark-theme=true
-gtk-font-name=JetBrains Mono 12
+gtk-font-name=${font} 12
 gtk-icon-theme-name=Papirus
 gtk-theme-name=adw-gtk3-dark
 EOF
@@ -79,7 +75,7 @@ mkdir -p "${config}"/gtk-4.0
 tee "${config}"/gtk-4.0/settings.ini >/dev/null <<EOF
 [Settings]
 gtk-application-prefer-dark-theme=true
-gtk-font-name=JetBrains Mono, 12
+gtk-font-name=${font}, 12
 gtk-icon-theme-name=Papirus
 gtk-theme-name=adw-gtk3-dark
 EOF
@@ -101,7 +97,7 @@ tee "${config}"/hypr/hyprland.conf >/dev/null <<EOF
     exec-once = alacritty --class dbar -e dbar
     exec-once = gsettings set org.gnome.desktop.interface color-scheme "prefer-dark"
     exec-once = gsettings set org.gnome.desktop.interface gtk-theme "adw-gtk3-dark"
-    exec-once = gsettings set org.gnome.desktop.interface font-name "JetBrains Mono 12"
+    exec-once = gsettings set org.gnome.desktop.interface font-name "${font} 12"
     exec-once = gsettings set org.gnome.desktop.interface icon-theme "Papirus"
 }
 {
@@ -192,16 +188,16 @@ background = "#0f0f0f"
 [font]
 size = 14
 [font.normal]
-family = "JetBrains Mono"
+family = "${font}"
 style = "Regular"
 [font.bold]
-family = "JetBrains Mono"
+family = "${font}"
 style = "Bold"
 [font.bold_italic]
-family = "JetBrains Mono"
+family = "${font}"
 style = "Bold Italic"
 [font.italic]
-family = "JetBrains Mono"
+family = "${font}"
 style = "Italic"
 EOF
 
