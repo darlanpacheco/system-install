@@ -25,7 +25,10 @@ alias gtp="git push"
 alias gtl="git log"
 
 terminal() {
-    alacritty --working-directory "\${PWD}" &
+    local count="\${1:-1}"
+    for ((i=0; i<count; i++)); do
+        alacritty --working-directory "\${PWD}" &
+    done
 }
 run() {
     nohup "\${@}" >/dev/null 2>&1 &
