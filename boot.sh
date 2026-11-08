@@ -23,7 +23,6 @@ sudo pacman -S --needed flatpak \
 
 sudo pacman -S --needed inkscape \
 	gimp \
-	libresprite \
 	blender \
 	obs-studio \
 	lmms \
@@ -78,6 +77,7 @@ flatpak install flathub -y org.mozilla.firefox \
 	org.gnome.Boxes
 
 flatpak install flathub -y org.libretro.RetroArch \
+	dev.eden_emu.eden \
 	com.valvesoftware.Steam \
 	com.heroicgameslauncher.hgl
 
