@@ -77,7 +77,6 @@ flatpak install flathub -y org.mozilla.firefox \
 	org.gnome.Boxes
 
 flatpak install flathub -y org.libretro.RetroArch \
-	dev.eden_emu.eden \
 	com.valvesoftware.Steam \
 	com.heroicgameslauncher.hgl
 

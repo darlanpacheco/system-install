@@ -491,35 +491,6 @@ input_player2_btn_r3 = "2"
 input_player2_btn_select = "-1"
 EOF
 
-mkdir -p "${var}"/app/dev.eden_emu.eden/config/eden
-tee "${var}"/app/dev.eden_emu.eden/config/eden/qt-config.ini >/dev/null <<'EOF'
-[Renderer]
-backend\default=false
-backend=1
-vulkan_device\default=false
-vulkan_device=0
-resolution_setup\default=false
-resolution_setup=3
-use_vsync\default=false
-use_vsync=2
-scaling_filter\default=false
-scaling_filter=0
-fsr_sharpening_slider\default=false
-fsr_sharpening_slider=25
-aspect_ratio\default=false
-aspect_ratio=0
-anti_aliasing\default=false
-anti_aliasing=0
-fullscreen_mode\default=false
-fullscreen_mode=1
-gpu_accuracy\default=false
-gpu_accuracy=0
-
-[UI]
-fullscreen\default=false
-fullscreen=true
-EOF
-
 mkdir -p "${config}"/MangoHud
 tee "${config}"/MangoHud/MangoHud.conf >/dev/null <<EOF
 toggle_hud=F12
