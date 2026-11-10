@@ -84,103 +84,116 @@ gtk-theme-name=adw-gtk3-dark
 EOF
 
 mkdir -p "${config}"/hypr
-tee "${config}"/hypr/hyprland.conf >/dev/null <<EOF
-{
-    workspace = 1, default:true
-    workspace = 1, gapsout:32 8 8 8
-    windowrule = match:initial_class ^(dbar|dmenu)$, float on
-    windowrule = match:initial_class ^dbar$, no_initial_focus on
-    windowrule = match:initial_class ^dbar$, size (monitor_w) 24
-    windowrule = match:initial_class ^dbar$, move 0 0
-    windowrule = match:initial_class ^dbar$, rounding 0
-    windowrule = match:initial_class ^dmenu$, size 512 256
-}
-{
-    exec-once = gammastep -O 2560k
-    exec-once = alacritty --class dbar -e dbar
-    exec-once = gsettings set org.gnome.desktop.interface color-scheme "prefer-dark"
-    exec-once = gsettings set org.gnome.desktop.interface gtk-theme "adw-gtk3-dark"
-    exec-once = gsettings set org.gnome.desktop.interface font-name "${font} 12"
-    exec-once = gsettings set org.gnome.desktop.interface icon-theme "Papirus"
-}
-{
-    bind = super, k, exec, pactl set-sink-volume @DEFAULT_SINK@ +8%
-    bind = super, j, exec, pactl set-sink-volume @DEFAULT_SINK@ -8%
+tee "${config}"/hypr/hyprland.lua >/dev/null <<EOF
+hl.on("hyprland.start", function()
+	hl.exec_cmd("gammastep -O 2560k")
+	hl.exec_cmd("alacritty --class dbar -e dbar")
+	hl.exec_cmd('gsettings set org.gnome.desktop.interface color-scheme "prefer-dark"')
+	hl.exec_cmd('gsettings set org.gnome.desktop.interface gtk-theme "adw-gtk3-dark"')
+	hl.exec_cmd('gsettings set org.gnome.desktop.interface font-name "JetBrains Mono 12"')
+	hl.exec_cmd('gsettings set org.gnome.desktop.interface icon-theme "Papirus"')
+end)
 
-    bind = super, t, togglefloating
+hl.monitor({
+	output = "",
+	mode = "preferred",
+	position = "auto",
+	scale = "auto",
+})
+hl.workspace_rule({
+	workspace = "1",
+	default = true,
+	gaps_out = { top = 32, right = 8, bottom = 8, left = 8 },
+})
+hl.window_rule({
+	name = "dbar-dmenu-float",
+	match = { initial_class = "^(dbar|dmenu)$" },
+	float = true,
+})
+hl.window_rule({
+	name = "dbar",
+	match = { initial_class = "^dbar$" },
+	no_initial_focus = true,
+	size = { "monitor_w", 24 },
+	move = { 0, 0 },
+	rounding = 0,
+})
+hl.window_rule({
+	name = "dmenu",
+	match = { initial_class = "^dmenu$" },
+	size = { 512, 320 },
+})
 
-    bind = super, return, exec, alacritty
-    bind = super, r, exec, rofi -show drun
-    bind = super, p, exec, grim -g "\$(slurp)" - | wl-copy
+hl.bind("SUPER + K", hl.dsp.exec_cmd("pactl set-sink-volume @DEFAULT_SINK@ +8%"))
+hl.bind("SUPER + J", hl.dsp.exec_cmd("pactl set-sink-volume @DEFAULT_SINK@ -8%"))
 
-    bind = super, f, fullscreen, active
-    bind = super, q, closewindow, active
+hl.bind("SUPER + T", hl.dsp.window.float({ action = "toggle" }))
 
-    bind = super, right, movefocus, r
-    bind = super, up, movefocus, u
-    bind = super, left, movefocus, l
-    bind = super, down, movefocus, d
+hl.bind("SUPER + Return", hl.dsp.exec_cmd("alacritty"))
+hl.bind("SUPER + R", hl.dsp.exec_cmd("alacritty --class dmenu -e dmenu"))
+hl.bind("SUPER + P", hl.dsp.exec_cmd('grim -g "$(slurp)" - | wl-copy'))
 
-    bind = super, 1, workspace, 1
-    bind = super, 2, workspace, 2
-    bind = super, 3, workspace, 3
-    bind = super, 4, workspace, 4
+hl.bind("SUPER + F", hl.dsp.window.fullscreen({ action = "toggle" }))
+hl.bind("SUPER + Q", hl.dsp.window.close())
 
-    bind = alt_l, 1, movetoworkspace, 1
-    bind = alt_l, 2, movetoworkspace, 2
-    bind = alt_l, 3, movetoworkspace, 3
-    bind = alt_l, 4, movetoworkspace, 4
+hl.bind("SUPER + SHIFT + right", hl.dsp.window.resize({ x = 64, y = 0, relative = true }))
+hl.bind("SUPER + SHIFT + up", hl.dsp.window.resize({ x = 0, y = -64, relative = true }))
+hl.bind("SUPER + SHIFT + left", hl.dsp.window.resize({ x = -64, y = 0, relative = true }))
+hl.bind("SUPER + SHIFT + down", hl.dsp.window.resize({ x = 0, y = 64, relative = true }))
 
-    bind = superalt_l, right, movewindow, r
-    bind = superalt_l, up, movewindow, u
-    bind = superalt_l, left, movewindow, l
-    bind = superalt_l, down, movewindow, d
+hl.bind("SUPER + ALT + mouse:272", hl.dsp.window.drag(), { mouse = true })
+hl.bind("SUPER + SHIFT + mouse:272", hl.dsp.window.resize(), { mouse = true })
 
-    bind = supershift, right, resizeactive, 64 0
-    bind = supershift, up, resizeactive, 0 -64
-    bind = supershift, left, resizeactive, -64 0
-    bind = supershift, down, resizeactive, 0 64
+for _, d in ipairs({ "right", "up", "left", "down" }) do
+	hl.bind("SUPER + " .. d, hl.dsp.focus({ direction = d }))
+	hl.bind("SUPER + ALT + " .. d, hl.dsp.window.move({ direction = d }))
+end
 
-    bindm = superalt_l, mouse:272, movewindow
-    bindm = supershift, mouse:272, resizewindow
-}
-input {
-    kb_layout = br
-    sensitivity = -0.2
-    accel_profile = flat
-}
-general {
-    gaps_in = 4
-    gaps_out = 8
-    border_size = 0
-}
-decoration {
-    active_opacity = 0.96
-    inactive_opacity = 0.96
-    fullscreen_opacity = 1
-    rounding = 8
+for i = 1, 4 do
+	hl.bind("SUPER + " .. i, hl.dsp.focus({ workspace = i }))
+	hl.bind("ALT + " .. i, hl.dsp.window.move({ workspace = i }))
+end
 
-    shadow {
-        enabled = false
-    }
-    blur {
-        enabled = true
-    }
-}
-animations {
-    enabled = false
-}
-misc {
-    force_default_wallpaper = 2
-    enable_anr_dialog = false
-    disable_splash_rendering = true
-    # disable_hyprland_logo = true
-    # background_color = 0x0f0f0f
-}
-ecosystem {
-    no_update_news = true
-    no_donation_nag = true
-}
+hl.config({
+	input = {
+		kb_layout = "br",
+		sensitivity = -0.2,
+		accel_profile = "flat",
+	},
+
+	general = {
+		gaps_in = 4,
+		gaps_out = 8,
+		border_size = 0,
+	},
+
+	decoration = {
+		active_opacity = 0.96,
+		inactive_opacity = 0.96,
+		fullscreen_opacity = 1,
+		rounding = 8,
+
+		shadow = { enabled = false },
+		blur = { enabled = true },
+	},
+
+	animations = {
+		enabled = false,
+	},
+
+	misc = {
+		force_default_wallpaper = 2,
+		enable_anr_dialog = false,
+		disable_splash_rendering = true,
+		-- disable_hyprland_logo = true,
+		-- background_color      = 0x0f0f0f,
+	},
+
+	ecosystem = {
+		no_update_news = true,
+		no_donation_nag = true,
+	},
+})
 EOF
 
 mkdir -p "${config}"/alacritty
