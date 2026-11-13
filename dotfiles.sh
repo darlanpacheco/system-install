@@ -490,6 +490,15 @@ input_player2_btn_r2 = "11"
 input_player2_btn_r3 = "2"
 input_player2_btn_select = "-1"
 EOF
+mkdir -p "${var}"/app/org.libretro.RetroArch/config/retroarch/config/Eden
+tee "${var}"/app/org.libretro.RetroArch/config/retroarch/config/Eden/Eden.opt >/dev/null <<EOF
+eden_renderer = "Vulkan"
+eden_gpu_accuracy = "Accurate"
+eden_resolution = "1x"
+eden_scaling_filter = "FSR"
+eden_fsr_sharpening = "0%"
+eden_anti_aliasing = "None"
+EOF
 
 mkdir -p "${config}"/MangoHud
 tee "${config}"/MangoHud/MangoHud.conf >/dev/null <<EOF
