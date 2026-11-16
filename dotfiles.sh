@@ -499,6 +499,18 @@ eden_scaling_filter = "FSR"
 eden_fsr_sharpening = "0%"
 eden_anti_aliasing = "None"
 EOF
+mkdir -p "${var}"/app/org.libretro.RetroArch/config/retroarch/config/Xenia
+tee "${var}"/app/org.libretro.RetroArch/config/retroarch/config/Xenia/Xenia.opt >/dev/null <<EOF
+xenia_resolution_scale = "1x"
+xenia_display_resolution = "1280x720"
+xenia_anti_aliasing = "None"
+xenia_upscaling = "FSR"
+xenia_output_resolution = "1920x1080"
+xenia_fsr_sharpness = "0%"
+xenia_anisotropic_filtering = "Game Default"
+xenia_render_target_path = "Performance"
+xenia_async_shaders = "enabled"
+EOF
 
 mkdir -p "${config}"/MangoHud
 tee "${config}"/MangoHud/MangoHud.conf >/dev/null <<EOF
