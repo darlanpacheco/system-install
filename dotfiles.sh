@@ -30,6 +30,12 @@ terminal() {
         alacritty --working-directory "\${PWD}" &
     done
 }
+agent() {
+    if [ -z "\${SSH_AUTH_SOCK}" ]; then
+        eval "\$(ssh-agent -s)" >/dev/null
+    fi
+    ssh-add -l >/dev/null 2>&1 || ssh-add
+}
 run() {
     nohup "\${@}" >/dev/null 2>&1 &
 }
